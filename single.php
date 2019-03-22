@@ -1,7 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+include('session.php');
+
+	$servername = "localhost";
+	$username = "root";
+	$password = "";
+	$dbname = "blogger";
+	// Create connection
+	$connection = new mysqli($servername, $username, $password, $dbname);
+	// Check connection
+	if ($connection->connect_error) {
+		die("Connection failed: " . $connection->connect_error);
+	} 
+	$blogno= $_GET['id'];
+
+?>
   <head>
-    <title>Explorer - Free Bootstrap 4 Template by Colorlib</title>
+    <title>Read a blog</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -239,19 +255,9 @@
                 </div>
               </form>
             </div>
-            <div class="sidebar-box ftco-animate">
-            	<h3>Destination</h3>
-              <ul class="categories">
-                <li><a href="#">Africa <span>(6)</span></a></li>
-                <li><a href="#">Asia <span>(8)</span></a></li>
-                <li><a href="#">Australia <span>(2)</span></a></li>
-                <li><a href="#">Europe <span>(2)</span></a></li>
-                <li><a href="#">North America <span>(7)</span></a></li>
-                <li><a href="#">South America <span>(5)</span></a></li>
-              </ul>
-            </div>
 
-            <div class="sidebar-box ftco-animate">
+
+         <!--   <div class="sidebar-box ftco-animate">
               <h3>Popular Articles</h3>
               <div class="block-21 mb-4 d-flex">
                 <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
@@ -286,7 +292,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div>-->
 
             <div class="sidebar-box ftco-animate">
               <h3>Tag Cloud</h3>
@@ -302,34 +308,12 @@
               </ul>
             </div>
 
-						<div class="sidebar-box subs-wrap">
-							<h3>Subcribe to our Newsletter</h3>
-							<p>Far far away, behind the word mountains, far from the countries Vokalia</p>
-              <form action="#" class="subscribe-form">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Email Address">
-                  <input type="submit" value="Subscribe" class="mt-2 btn btn-white submit">
-                </div>
-              </form>
-            </div>
+						
 
-            <div class="sidebar-box ftco-animate">
-            	<h3>Archives</h3>
-              <ul class="categories">
-                <li><a href="#">September 2018 <span>(6)</span></a></li>
-                <li><a href="#">August 2018 <span>(8)</span></a></li>
-                <li><a href="#">July 2018 <span>(2)</span></a></li>
-                <li><a href="#">June 2018 <span>(7)</span></a></li>
-                <li><a href="#">May 2018 <span>(5)</span></a></li>
-                <li><a href="#">April 2018 <span>(3)</span></a></li>
-              </ul>
-            </div>
+        
 
 
-            <div class="sidebar-box ftco-animate">
-              <h3>Paragraph</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus itaque, autem necessitatibus voluptate quod mollitia delectus aut, sunt placeat nam vero culpa sapiente consectetur similique, inventore eos fugit cupiditate numquam!</p>
-            </div>
+            
           </div><!-- END COL -->
 
         </div>

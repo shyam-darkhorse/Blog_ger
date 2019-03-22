@@ -37,7 +37,7 @@ $stmt->close();
 
 mysqli_close($conn);
 
-$target_dir = "/wamp64/www/blogger/signup/profilepic/";
+$target_dir = "/wamp64/www/Blog_ger/signup/profilepic/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
 $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
