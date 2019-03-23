@@ -95,7 +95,7 @@ include('session.php');
 	              	<div class="half order-md-last">
 		              	<p class="meta">
 		              		<span><i class="icon-heart"></i>'.$row2['likes'].'</span>
-		              		<span><i class="icon-eye"></i>'.$row2['views'].'</span>
+		              		
 		              		<span><i class="icon-comment"></i>'.$row2['comments'].'</span>
 		              	</p>
 	              	</div>

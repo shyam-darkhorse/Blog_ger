@@ -13,7 +13,155 @@ include('session.php');
 	if ($connection->connect_error) {
 		die("Connection failed: " . $connection->connect_error);
 	} 
+	
 	$blogno= $_GET['id'];
+	
+	//add comment
+		if(isset($_POST['commentsub']))
+		{	$com =$_POST['com'];
+			
+			$c = $_POST['count'] +1;
+			$curruser = $_SESSION['login_user'];
+			$csql = "Insert into comments (userid,comment,time,blogid,date) values ('$curruser','$com',curtime(),'$blogno',curdate())";
+			echo $csql;
+			$res=$connection->query($csql) or die($connection->error);
+			$usql = "update blog set comments = '$c' where blogid ='$blogno'";
+			$res=$connection->query($usql) or die($connection->error);
+			
+		 
+		
+		}
+	$sqlblog = "SELECT * from blog where blogid = '$blogno'";
+	$result = $connection->query($sqlblog);
+	$authorid = 0;
+	while($row =$result->fetch_assoc())
+	{	$commentcount = $row['comments'];
+		$authorid = $row['userid'];
+		$like = $row['likes'];
+			$temp = $blogno;
+			$temp = str_replace(" ","",$temp);
+			$files = glob("/wamp64/www/Blog_ger/images/uploads/$temp.*");
+			$eventimg=0;
+			for ($i=0; $i<count($files); $i++)
+			{
+				$eventimg=1;
+				$num = $files[$i];
+				$num = str_replace("/wamp64/www","",$num);
+			}
+			if($eventimg==0)
+			{
+				$num="images/uploads/blog.jpg";
+			}	
+		
+	$blogText = '  <h2 class="mb-3 font-weight-bold">'.$row['title'].'</h2>
+            
+            <p>
+              <img src="'.$num.'" alt="" class="img-fluid">
+            </p>
+            <p>'.$row['text'].'</p>
+            <div class="tag-widget post-tag-container mb-5 mt-5">
+              <div class="tagcloud">
+                <a href="#" class="tag-cloud-link">Life</a>
+                <a href="#" class="tag-cloud-link">Sport</a>
+                <a href="#" class="tag-cloud-link">Tech</a>
+                <a href="#" class="tag-cloud-link">Travel</a>
+              </div>
+            </div>
+            ';
+	
+	
+	}
+	$sqlbio = "select * from bloguser where user_id = '$authorid'";
+	$result1 = $connection->query($sqlbio);
+	while($row1 =$result1->fetch_assoc())
+	{		
+		
+
+
+			$titleBlock = ' <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
+          <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: \'70%\' }">
+            <p class="breadcrumbs" data-scrollax="properties: { translateY:\'30%\', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Articles</span></p>
+            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: \'30%\', opacity: 1.6 }">'.$row1['title'].'</h1>
+          </div>
+        </div><p id = "blogval" value = "'.$blogno.'"></p>';
+		
+		 $namequery = "SELECT username from user where user_id = '$authorid'";
+		  $res = $connection->query($namequery);
+		 if( $row2 =$res->fetch_assoc())
+		{
+		
+		$nameauth= $row2['username'];
+			$temp = $authorid;
+			$files = glob("/wamp64/www/Blog_ger/signup/profilepic/$temp.*");
+			$flag1=1;
+			for ($i=0; $i<count($files); $i++)
+			{
+				$flag1=0;
+				$dp = $files[$i];
+				$dp = str_replace("/wamp64/www","",$dp);
+			}
+			if($flag1==1)
+			{
+				$dp="signup/profilepic/img-avatar.png";
+			}
+		}
+		$authorBio = '            <div class="about-author d-flex p-4 bg-light">
+              <div class="bio mr-5">
+                <img src="'.$dp.'" alt="Image placeholder" class="img-fluid mb-4">
+              </div>
+              <div class="desc">
+                <h3>'.$nameauth.'</h3>
+                <p>'.$row1['authorbio'].'</p>
+              </div>
+            </div>';
+	
+	
+	}
+	
+	$sqlcomm = "select * from comments where blogid = '$blogno'";
+	$result3 = $connection->query($sqlcomm);
+	$comments = '';
+	while($row3 =$result3->fetch_assoc())
+	{	$usercomm = $row3['userid'];
+		$namequery1 = "SELECT username from user where user_id = '$usercomm'";
+		  $res1 = $connection->query($namequery1);
+		 // echo $namequery;	
+		 if( $row4 =$res1->fetch_assoc())
+		{
+		
+		$nameuser= $row4['username'];
+			$temp = $usercomm;
+			$files = glob("/wamp64/www/Blog_ger/signup/profilepic/$temp.*");
+			$flag1=1;
+			for ($i=0; $i<count($files); $i++)
+			{
+				$flag1=0;
+				$dp = $files[$i];
+				$dp = str_replace("/wamp64/www","",$dp);
+			}
+			if($flag1==1)
+			{
+				$dp="signup/profilepic/img-avatar.png";
+			}
+		}
+		$comments.=' <ul class="comment-list">
+                <li class="comment">
+                  <div class="vcard bio">
+                    <img src="'.$dp.'" alt="Image placeholder">
+                  </div>
+                  <div class="comment-body">
+                    <h3>'.$nameuser.'</h3>
+                    <div class="meta">'.$row3['date'].'  '.$row3['time'].'</div>
+                    <p>'.$row3['comment'].'</p>
+                    
+                  </div>
+                </li>';
+		
+	}
+	
+	
+	
+	
 
 ?>
   <head>
@@ -37,11 +185,12 @@ include('session.php');
 
     <link rel="stylesheet" href="css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="css/jquery.timepicker.css">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     
     <link rel="stylesheet" href="css/flaticon.css">
     <link rel="stylesheet" href="css/icomoon.css">
     <link rel="stylesheet" href="css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
     
@@ -58,22 +207,7 @@ include('session.php');
             </li>
 	          <li class="nav-item"><a href="author.php" class="nav-link">Authors</a>
             </li>
-	      <!--    <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Archives</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown04">
-              	<a class="dropdown-item" href="destination.html">Destination</a>
-                <a class="dropdown-item" href="tag.html">Tag</a>
-                <a class="dropdown-item" href="author-post.html">Authors Post</a>
-              </div>
-            </li>
-	          <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown04">
-              	<a class="dropdown-item" href="right-sidebar.html">Right Sidebar</a>
-                <a class="dropdown-item" href="left-sidebar.html">Left Sidebar</a>
-                <a class="dropdown-item" href="author.html">Authors Page</a>
-              </div>
-            </li>-->
+
 	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
 			   <li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>
 	        </ul>
@@ -85,12 +219,7 @@ include('session.php');
     <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_3.jpg');" data-stellar-background-ratio="0.5">
       <div class="overlay"></div>
       <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
-          <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Articles</span></p>
-            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Single Articles</h1>
-          </div>
-        </div>
+	<?php echo $titleBlock;?>
       </div>
     </div>
 
@@ -98,147 +227,55 @@ include('session.php');
       <div class="container">
         <div class="row">
           <div class="col-lg-8 ftco-animate">
-            <h2 class="mb-3 font-weight-bold">What to pack when visiting Philippines in summer time</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, eius mollitia suscipit, quisquam doloremque distinctio perferendis et doloribus unde architecto optio laboriosam porro adipisci sapiente officiis nemo accusamus ad praesentium? Esse minima nisi et. Dolore perferendis, enim praesentium omnis, iste doloremque quia officia optio deserunt molestiae voluptates soluta architecto tempora.</p>
-            <p>
-              <img src="images/image_1.jpg" alt="" class="img-fluid">
-            </p>
-            <p>Molestiae cupiditate inventore animi, maxime sapiente optio, illo est nemo veritatis repellat sunt doloribus nesciunt! Minima laborum magni reiciendis qui voluptate quisquam voluptatem soluta illo eum ullam incidunt rem assumenda eveniet eaque sequi deleniti tenetur dolore amet fugit perspiciatis ipsa, odit. Nesciunt dolor minima esse vero ut ea, repudiandae suscipit!</p>
-            <h2 class="mb-3 mt-5">#2. Creative WordPress Themes</h2>
-            <p>Temporibus ad error suscipit exercitationem hic molestiae totam obcaecati rerum, eius aut, in. Exercitationem atque quidem tempora maiores ex architecto voluptatum aut officia doloremque. Error dolore voluptas, omnis molestias odio dignissimos culpa ex earum nisi consequatur quos odit quasi repellat qui officiis reiciendis incidunt hic non? Debitis commodi aut, adipisci.</p>
-            <p>
-              <img src="images/image_2.jpg" alt="" class="img-fluid">
-            </p>
-            <p>Quisquam esse aliquam fuga distinctio, quidem delectus veritatis reiciendis. Nihil explicabo quod, est eos ipsum. Unde aut non tenetur tempore, nisi culpa voluptate maiores officiis quis vel ab consectetur suscipit veritatis nulla quos quia aspernatur perferendis, libero sint. Error, velit, porro. Deserunt minus, quibusdam iste enim veniam, modi rem maiores.</p>
-            <p>Odit voluptatibus, eveniet vel nihil cum ullam dolores laborum, quo velit commodi rerum eum quidem pariatur! Quia fuga iste tenetur, ipsa vel nisi in dolorum consequatur, veritatis porro explicabo soluta commodi libero voluptatem similique id quidem? Blanditiis voluptates aperiam non magni. Reprehenderit nobis odit inventore, quia laboriosam harum excepturi ea.</p>
-            <p>Adipisci vero culpa, eius nobis soluta. Dolore, maxime ullam ipsam quidem, dolor distinctio similique asperiores voluptas enim, exercitationem ratione aut adipisci modi quod quibusdam iusto, voluptates beatae iure nemo itaque laborum. Consequuntur et pariatur totam fuga eligendi vero dolorum provident. Voluptatibus, veritatis. Beatae numquam nam ab voluptatibus culpa, tenetur recusandae!</p>
-            <p>Voluptas dolores dignissimos dolorum temporibus, autem aliquam ducimus at officia adipisci quasi nemo a perspiciatis provident magni laboriosam repudiandae iure iusto commodi debitis est blanditiis alias laborum sint dolore. Dolores, iure, reprehenderit. Error provident, pariatur cupiditate soluta doloremque aut ratione. Harum voluptates mollitia illo minus praesentium, rerum ipsa debitis, inventore?</p>
-            <div class="tag-widget post-tag-container mb-5 mt-5">
-              <div class="tagcloud">
-                <a href="#" class="tag-cloud-link">Life</a>
-                <a href="#" class="tag-cloud-link">Sport</a>
-                <a href="#" class="tag-cloud-link">Tech</a>
-                <a href="#" class="tag-cloud-link">Travel</a>
-              </div>
-            </div>
-            
-            <div class="about-author d-flex p-4 bg-light">
-              <div class="bio mr-5">
-                <img src="images/person_1.jpg" alt="Image placeholder" class="img-fluid mb-4">
-              </div>
-              <div class="desc">
-                <h3>George Washington</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus itaque, autem necessitatibus voluptate quod mollitia delectus aut, sunt placeat nam vero culpa sapiente consectetur similique, inventore eos fugit cupiditate numquam!</p>
-              </div>
-            </div>
+			<?php 
+			echo $blogText;?>
+			<p id = "likescount" value ="<?php echo $like;?>" ><span id = "c1"><?php echo $like;?></span> likes <a href="#likeb" id ="likeb" class="btn btn-primary px-3 py-2">Like<i  class="fa fa-thumbs-up"></i></a>
+			</p>
+			<?php echo $authorBio;?>
 
-
+			
             <div class="pt-5 mt-5">
-              <h3 class="mb-5">6 Comments</h3>
-              <ul class="comment-list">
-                <li class="comment">
-                  <div class="vcard bio">
-                    <img src="images/person_1.jpg" alt="Image placeholder">
-                  </div>
-                  <div class="comment-body">
-                    <h3>John Doe</h3>
-                    <div class="meta">October 03, 2018 at 2:21pm</div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                    <p><a href="#" class="reply">Reply</a></p>
-                  </div>
-                </li>
-
-                <li class="comment">
-                  <div class="vcard bio">
-                    <img src="images/person_1.jpg" alt="Image placeholder">
-                  </div>
-                  <div class="comment-body">
-                    <h3>John Doe</h3>
-                    <div class="meta">October 03, 2018 at 2:21pm</div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                    <p><a href="#" class="reply">Reply</a></p>
-                  </div>
-
-                  <ul class="children">
-                    <li class="comment">
-                      <div class="vcard bio">
-                        <img src="images/person_1.jpg" alt="Image placeholder">
-                      </div>
-                      <div class="comment-body">
-                        <h3>John Doe</h3>
-                        <div class="meta">October 03, 2018 at 2:21pm</div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                        <p><a href="#" class="reply">Reply</a></p>
-                      </div>
+              <h3 class="mb-5"><?php echo $commentcount;?> Comments</h3>
+				<?php echo $comments;?>
 
 
-                      <ul class="children">
-                        <li class="comment">
-                          <div class="vcard bio">
-                            <img src="images/person_1.jpg" alt="Image placeholder">
-                          </div>
-                          <div class="comment-body">
-                            <h3>John Doe</h3>
-                            <div class="meta">October 03, 2018 at 2:21pm</div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                            <p><a href="#" class="reply">Reply</a></p>
-                          </div>
 
-                            <ul class="children">
-                              <li class="comment">
-                                <div class="vcard bio">
-                                  <img src="images/person_1.jpg" alt="Image placeholder">
-                                </div>
-                                <div class="comment-body">
-                                  <h3>John Doe</h3>
-                                  <div class="meta">October 03, 2018 at 2:21pm</div>
-                                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                  <p><a href="#" class="reply">Reply</a></p>
-                                </div>
-                              </li>
-                            </ul>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
 
-                <li class="comment">
-                  <div class="vcard bio">
-                    <img src="images/person_1.jpg" alt="Image placeholder">
-                  </div>
-                  <div class="comment-body">
-                    <h3>John Doe</h3>
-                    <div class="meta">October 03, 2018 at 2:21pm</div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                    <p><a href="#" class="reply">Reply</a></p>
-                  </div>
-                </li>
               </ul>
               <!-- END comment-list -->
-              
+			  
+	<script>
+
+	$("#likeb").click(function() {
+    //in here we can do the ajax after validating the field isn't empty.
+	 var newlikes = <?php echo $like;?>+1;
+	document.getElementById("c1").innerHTML = newlikes;
+	
+        $.post("update.php",{ likec: <?php echo $like+1;?>, blogid:"<?php echo $blogno ?>"}, //your form data to post goes here as a json object
+			 function (data, status, xhr) {
+				
+    
+            } 
+        );
+		}
+     
+);
+
+
+
+</script>
               <div class="comment-form-wrap pt-5">
                 <h3 class="mb-5">Leave a comment</h3>
-                <form action="#" class="p-5 bg-light">
-                  <div class="form-group">
-                    <label for="name">Name *</label>
-                    <input type="text" class="form-control" id="name">
-                  </div>
-                  <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" class="form-control" id="email">
-                  </div>
-                  <div class="form-group">
-                    <label for="website">Website</label>
-                    <input type="url" class="form-control" id="website">
-                  </div>
+                <form action="" class="p-5 bg-light" method = "post">
+
 
                   <div class="form-group">
                     <label for="message">Message</label>
-                    <textarea name="" id="message" cols="30" rows="10" class="form-control"></textarea>
+                    <textarea name="com" id="message" cols="30" rows="10" class="form-control"></textarea>
                   </div>
                   <div class="form-group">
-                    <input type="submit" value="Post Comment" class="btn py-3 px-4 btn-primary">
+				  <input type = "hidden" name = "count" value ="<?php echo $commentcount;?>">
+                    <input name = "commentsub" type="submit" value="Post Comment" class="btn py-3 px-4 btn-primary">
                   </div>
 
                 </form>
@@ -248,7 +285,7 @@ include('session.php');
           </div> <!-- .col-md-8 -->
           <div class="col-lg-4 sidebar ftco-animate">
             <div class="sidebar-box">
-              <form action="#" class="search-form">
+              <form action="" class="search-form">
                 <div class="form-group">
                   <span class="icon icon-search"></span>
                   <input type="text" class="form-control" placeholder="Type a keyword and hit enter">
@@ -322,57 +359,9 @@ include('session.php');
 
     <footer class="ftco-footer ftco-bg-dark ftco-section">
       <div class="container">
-        <div class="row mb-5">
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Explorer</h2>
-              <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-              <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-3">
-                <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4 ml-md-4">
-              <h2 class="ftco-heading-2">Destination</h2>
-              <ul class="list-unstyled categories">
-                <li><a href="#">Africa <span>(6)</span></a></li>
-                <li><a href="#">Asia <span>(8)</span></a></li>
-                <li><a href="#">Australia <span>(2)</span></a></li>
-                <li><a href="#">Europe <span>(2)</span></a></li>
-                <li><a href="#">North America <span>(7)</span></a></li>
-                <li><a href="#">South America <span>(5)</span></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md">
-             <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Archives</h2>
-              <ul class="list-unstyled categories">
-                <li><a href="#">September 2018 <span>(6)</span></a></li>
-                <li><a href="#">August 2018 <span>(8)</span></a></li>
-                <li><a href="#">July 2018 <span>(2)</span></a></li>
-                <li><a href="#">June 2018 <span>(7)</span></a></li>
-                <li><a href="#">May 2018 <span>(5)</span></a></li>
-                <li><a href="#">April 2018 <span>(3)</span></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4">
-            	<h2 class="ftco-heading-2">Have a Questions?</h2>
-            	<div class="block-23 mb-3">
-	              <ul>
-	                <li><span class="icon icon-map-marker"></span><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
-	                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+2 392 3929 210</span></a></li>
-	                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">info@yourdomain.com</span></a></li>
-	              </ul>
-	            </div>
-            </div>
-          </div>
-        </div>
+
+		
+		
         <div class="row">
           <div class="col-md-12 text-center">
 

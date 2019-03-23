@@ -185,7 +185,7 @@ include('session.php');
 	              	<div class="half order-md-last">
 		              	<p class="meta">
 		              		<span><i class="icon-heart"></i>'.$row['likes'].'</span>
-		              		<span><i class="icon-eye"></i>'.$row['views'].'</span>
+		              		
 		              		<span><i class="icon-comment"></i>'.$row['comments'].'</span>
 		              	</p>
 	              	</div>
