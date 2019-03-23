@@ -23,7 +23,7 @@ include('session.php');
 			$c = $_POST['count'] +1;
 			$curruser = $_SESSION['login_user'];
 			$csql = "Insert into comments (userid,comment,time,blogid,date) values ('$curruser','$com',curtime(),'$blogno',curdate())";
-			echo $csql;
+			
 			$res=$connection->query($csql) or die($connection->error);
 			$usql = "update blog set comments = '$c' where blogid ='$blogno'";
 			$res=$connection->query($usql) or die($connection->error);
@@ -59,14 +59,7 @@ include('session.php');
               <img src="'.$num.'" alt="" class="img-fluid">
             </p>
             <p>'.$row['text'].'</p>
-            <div class="tag-widget post-tag-container mb-5 mt-5">
-              <div class="tagcloud">
-                <a href="#" class="tag-cloud-link">Life</a>
-                <a href="#" class="tag-cloud-link">Sport</a>
-                <a href="#" class="tag-cloud-link">Tech</a>
-                <a href="#" class="tag-cloud-link">Travel</a>
-              </div>
-            </div>
+           
             ';
 	
 	
@@ -80,7 +73,7 @@ include('session.php');
 
 			$titleBlock = ' <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
           <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: \'70%\' }">
-            <p class="breadcrumbs" data-scrollax="properties: { translateY:\'30%\', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Articles</span></p>
+            <p class="breadcrumbs" data-scrollax="properties: { translateY:\'30%\', opacity: 1.6 }"><span class="mr-2"><a href="index.php">Home</a></span> <span>Articles</span></p>
             <h1 class="mb-3 bread" data-scrollax="properties: { translateY: \'30%\', opacity: 1.6 }">'.$row1['title'].'</h1>
           </div>
         </div><p id = "blogval" value = "'.$blogno.'"></p>';
@@ -159,16 +152,80 @@ include('session.php');
 		
 	}
 	
+	   $poparticles = 'Nothing to show';
+		$sql5 = "SELECT * FROM blog order by createdon desc";
+		$result5 = $connection->query($sql5);
+		$count = 0;
+		while($row5 =$result5->fetch_assoc() )
+		{
+			if($count==5)
+			break;
+			if($row5['blogid']!= $blogno)
+			{	
+			if($count == 0)
+				$poparticles ='';
+			$count++;
+			$s = $row5['userid'];
+			$nameqry3 = "SELECT username from user where user_id = '$s';";
+			$nameres2 = $connection->query($nameqry3);
+			$n =$nameres2->fetch_assoc();
+			$temp = $row5['blogid'];
+			$temp = str_replace(" ","",$temp);
+			$files = glob("/wamp64/www/Blog_ger/images/uploads/$temp.*");
+			$eventimg=0;
+			for ($i=0; $i<count($files); $i++)
+			{
+				$eventimg=1;
+				$num = $files[$i];
+				$num = str_replace("/wamp64/www","",$num);
+			}
+			if($eventimg==0)
+			{
+				$num="images/uploads/blog.jpg";
+			}
+			$temp = $row['userid'];
+			$files = glob("/wamp64/www/Blog_ger/signup/profilepic/$temp.*");
+			$flag1=1;
+			for ($i=0; $i<count($files); $i++)
+			{
+				$flag1=0;
+				$dp = $files[$i];
+				$dp = str_replace("/wamp64/www","",$dp);
+			}
+			if($flag1==1)
+			{
+				$dp="signup/profilepic/img-avatar.png";
+			}
+			
+
 	
-	
-	
+	$poparticles.='              <div class="block-21 mb-4 d-flex">
+                <a class="blog-img mr-4" style="background-image: url('.$num.');"></a>
+                <div class="text">
+                  <h3 class="heading"><a href="single.php?id='.$row5['blogid'].'">'.$row5['title'].'</a></h3>
+                  <div class="meta">
+                    <div><span class="icon-calendar"></span> '.$row5['createdon'].'</div>
+                    <div><span class="icon-person"></span> '.$n['username'].'</a></div>
+                    <div><span class="icon-chat"></span> '.$row5['comments'].'</div>
+                  </div>
+                </div>
+              </div>';		
+		}
+		}
+			
 
 ?>
   <head>
     <title>Read a blog</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+    <style>
+
+	.heartbtn:hover{
+		
+	transform: scale(1.2);
+	}
+	</style>
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
 
@@ -229,8 +286,10 @@ include('session.php');
           <div class="col-lg-8 ftco-animate">
 			<?php 
 			echo $blogText;?>
-			<p id = "likescount" value ="<?php echo $like;?>" ><span id = "c1"><?php echo $like;?></span> likes <a href="#likeb" id ="likeb" class="btn btn-primary px-3 py-2">Like<i  class="fa fa-thumbs-up"></i></a>
+			<p id = "likescount" value ="<?php echo $like;?>" ><img id ="likeb" src="images/no_heart.png" class = "heartbtn" height ="25px" width ="25px"/> <span id = "c1"><?php echo $like;?></span> likes 
 			</p>
+			<!--<a  id ="likeb" class="btn btn-primary px-3 py-2">Like<i  class="fa fa-thumbs-up"></i></a>-->
+			
 			<?php echo $authorBio;?>
 
 			
@@ -249,8 +308,9 @@ include('session.php');
 	$("#likeb").click(function() {
     //in here we can do the ajax after validating the field isn't empty.
 	 var newlikes = <?php echo $like;?>+1;
-	document.getElementById("c1").innerHTML = newlikes;
 	
+	document.getElementById("c1").innerHTML = newlikes;
+	document.getElementById("likeb").src = "images/heart.png";
         $.post("update.php",{ likec: <?php echo $like+1;?>, blogid:"<?php echo $blogno ?>"}, //your form data to post goes here as a json object
 			 function (data, status, xhr) {
 				
@@ -283,67 +343,24 @@ include('session.php');
             </div>
 
           </div> <!-- .col-md-8 -->
-          <div class="col-lg-4 sidebar ftco-animate">
-            <div class="sidebar-box">
+       <div class="col-lg-4 sidebar ftco-animate">
+            <!--   <div class="sidebar-box">
               <form action="" class="search-form">
                 <div class="form-group">
                   <span class="icon icon-search"></span>
                   <input type="text" class="form-control" placeholder="Type a keyword and hit enter">
                 </div>
               </form>
-            </div>
-
-
-         <!--   <div class="sidebar-box ftco-animate">
-              <h3>Popular Articles</h3>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about the blind texts</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> Oct. 04, 2018</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Dave Lewis</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about the blind texts</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> Oct. 04, 2018</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Dave Lewis</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url(images/image_3.jpg);"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about the blind texts</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> Oct. 04, 2018</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Dave Lewis</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
             </div>-->
 
+
             <div class="sidebar-box ftco-animate">
-              <h3>Tag Cloud</h3>
-              <ul class="tagcloud">
-                <a href="#" class="tag-cloud-link">dish</a>
-                <a href="#" class="tag-cloud-link">menu</a>
-                <a href="#" class="tag-cloud-link">food</a>
-                <a href="#" class="tag-cloud-link">sweet</a>
-                <a href="#" class="tag-cloud-link">tasty</a>
-                <a href="#" class="tag-cloud-link">delicious</a>
-                <a href="#" class="tag-cloud-link">desserts</a>
-                <a href="#" class="tag-cloud-link">drinks</a>
-              </ul>
+              <h3>Recent Articles</h3>
+<?php echo $poparticles;?>
+       
             </div>
+
+
 
 						
 
