@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
+
 include('session.php');
+		if($_SESSION['isBlogger']==True){
+		
+		$nav = '<li class="nav-item"><a href="manage.php" class="nav-link">Manage your blog</a>
+            </li>';
+			}
+		else{
+		$nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your blog</a>
+            </li>';
+			}
 
 	$servername = "localhost";
 	$username = "root";
@@ -222,7 +232,7 @@ include('session.php');
     <style>
 
 	.heartbtn:hover{
-		
+		cursor : pointer;
 	transform: scale(1.2);
 	}
 	</style>
@@ -253,7 +263,7 @@ include('session.php');
     
 	 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 	    <div class="container">
-	      <a class="navbar-brand" href="index.html">Blogger</a>
+	      <a class="navbar-brand" href="index.php">Blogger</a>
 	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
 	        <span class="oi oi-menu"></span> Menu
 	      </button>
@@ -264,6 +274,8 @@ include('session.php');
             </li>
 	          <li class="nav-item"><a href="author.php" class="nav-link">Authors</a>
             </li>
+			<?php echo $nav;?>
+		
 
 	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
 			   <li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>

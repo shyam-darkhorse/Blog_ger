@@ -2,7 +2,15 @@
 <?php
 
 include('session.php');
-
+		if($_SESSION['isBlogger']==True){
+		
+		$nav = '<li class="nav-item"><a href="manage.php" class="nav-link">Manage your blog</a>
+            </li>';
+			}
+		else{
+		$nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your blog</a>
+            </li>';
+			}
 ?>
 <html lang="en">
   <head>
@@ -36,7 +44,7 @@ include('session.php');
     
 	  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 	    <div class="container">
-	      <a class="navbar-brand" href="index.html">Blogger</a>
+	      <a class="navbar-brand" href="index.php">Blogger</a>
 	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
 	        <span class="oi oi-menu"></span> Menu
 	      </button>
@@ -47,22 +55,9 @@ include('session.php');
             </li>
 	          <li class="nav-item"><a href="author.php" class="nav-link">Authors</a>
             </li>
-	      <!--    <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Archives</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown04">
-              	<a class="dropdown-item" href="destination.html">Destination</a>
-                <a class="dropdown-item" href="tag.html">Tag</a>
-                <a class="dropdown-item" href="author-post.html">Authors Post</a>
-              </div>
-            </li>
-	          <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown04">
-              	<a class="dropdown-item" href="right-sidebar.html">Right Sidebar</a>
-                <a class="dropdown-item" href="left-sidebar.html">Left Sidebar</a>
-                <a class="dropdown-item" href="author.html">Authors Page</a>
-              </div>
-            </li>-->
+			<?php echo $nav;?>
+		
+
 	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
 			   <li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>
 	        </ul>

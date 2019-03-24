@@ -36,10 +36,16 @@ $servername = "localhost";
 			if ( $row["pwd"] === $password ) {
 				$message = "login successful";
 				$_SESSION['login_user']=$row['user_id'];
-				//$_SESSION['lastlogin']=$row['lastlogin'];
-				//$sql="UPDATE userdetails set lastlogin=NOW() where rollnumber='$roll'";
-				//$result = $conn->query($sql) or die($conn->error);
+				$id = $row['user_id'];
 				echo "DOne";
+				$sql1 = "select count(*)as c from bloguser where user_id = '$id'";
+				$result1 = $conn->query($sql1) or die($conn->error);
+				$c = $result1->fetch_assoc();
+				if($c['c']==1){
+				$_SESSION['isBlogger'] = True;
+				}
+				else
+					$_SESSION['isBlogger'] = False;	
 				Header("Location:index.php");
 			}
 			else {

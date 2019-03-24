@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
 <?php
+
 include('session.php');
-if($_SESSION['isBlogger']==True){
-
-$nav = '<li class="nav-item"><a href="manage.php" class="nav-link">Manage your blog</a>
-	</li>';
-	}
-else{
-$nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your blog</a>
-	</li>';
-	}
-
+		if($_SESSION['isBlogger']==True){
+		
+		$nav = '<li class="nav-item"><a href="manage.php" class="nav-link">Manage your blog</a>
+            </li>';
+			}
+		else{
+		$nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your blog</a>
+            </li>';
+			}
+			
+	if(isset($_POST['submit'])){
 	$servername = "localhost";
 	$username = "root";
 	$password = "";
@@ -22,49 +23,19 @@ $nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your b
 	if ($connection->connect_error) {
 		die("Connection failed: " . $connection->connect_error);
 	} 
-	$sql = "SELECT * from bloguser ";
-	$result = $connection->query($sql);
-	$author = "";
-	while($row =$result->fetch_assoc())
-	{		$authid = $row['user_id'];
-		 $namequery = "SELECT username from user where user_id = '$authid'";
-		  $res = $connection->query($namequery);
-		 if( $row1 =$res->fetch_assoc())
-		{
-			$nameauth= $row1['username'];
-			$temp = $authid;
-			$files = glob("/wamp64/www/Blog_ger/signup/profilepic/$temp.*");
-			$flag1=1;
-			for ($i=0; $i<count($files); $i++)
-			{
-				$flag1=0;
-				$dp = $files[$i];
-				$dp = str_replace("/wamp64/www","",$dp);
-			}
-			if($flag1==1)
-			{
-				$dp="signup/profilepic/img-avatar.png";
-			}
-			
-			$author .='<div class="author-wrap d-flex">
-    					<div class="img" style="background-image: url('.$dp.');"></div>
-    					<div class="text">
-    						<h3>'.$nameauth.'</h3>
-    						<span class="d-block">'.$row['blogcount'].' Articles</span>
-    						<p>'.$row['authorbio'].'</p>
-    						<p><a href="author-post.php?id='.$authid.'" class="btn btn-primary btn-outline-primary">View Articles</a></p>
-    					</div>
-    				</div>';
-			
-		}
-		else{
-		echo "No records";
+	$id = $_SESSION['login_user'];
+	$t =$_POST['title'];
+	$a =$_POST['authbio'];
+	$sql = "insert into bloguser(user_id,title,authorbio) values('$id','$t','$a' )";
+	$result1 = $connection->query($sql) or die($connection->error);
+	$_SESSION['isBlogger']=True;
+	header('Location:manage.php');
 		
-		}
 	}
-	?>
+?>
+<html lang="en">
   <head>
-    <title>BLogger | authors</title>
+    <title>Create a blog</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -92,7 +63,8 @@ $nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your b
   </head>
   <body>
     
-	 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	  
+	 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark " id="ftco-navbar">
 	    <div class="container">
 	      <a class="navbar-brand" href="index.php">Blogger</a>
 	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,34 +87,38 @@ $nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your b
 	    </div>
 	  </nav>
     <!-- END nav -->
-    
-    <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_3.jpg');" data-stellar-background-ratio="0.5">
-      <div class="overlay"></div>
+	<section class="ftco-section ftco-degree-bg">
       <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
-          <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.php">Home</a></span> <span>Pages</span></p>
-            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Authors Page</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <section class="ftco-section">
-    	<div class="container">
-    		<div class="row justify-content-center">
+	  <div class="row justify-content-center">
     			<div class="col-md-8">
 				
-				<?php echo $author;?>
+				              <div class="comment-form-wrap pt-5">
+                <h3 class="mb-5">Create a Blog</h3>
+                <form action="create.php" method = "post" class="p-5 bg-light">
+                  <div class="form-group">
+                    <label for="title">Title of Blog</label>
+                    <input type="text" class="form-control" name = "title" id="title">
+                  </div>
+                  
+
+                  <div class="form-group">
+                    <label for="bio">Short bio</label>
+                    <textarea  id="bio" cols="30" name ="authbio"  rows="10" class="form-control"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <input type="submit" name = "submit" value="Create" class="btn py-3 px-4 btn-primary">
+                  </div>
+
+                </form>
+              </div>
 					
 					
 					
     			</div>
     		</div>
-    	</div>
-    </section>
-
-    <footer class="ftco-footer ftco-bg-dark ftco-section">
+	  </div>
+    </section> 
+	   <footer class="ftco-footer ftco-bg-dark ftco-section">
       <div class="container">
 	  
 

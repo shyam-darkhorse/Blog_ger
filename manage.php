@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
 <?php
+
 include('session.php');
-
-if($_SESSION['isBlogger']==True){
-
-$nav = '<li class="nav-item"><a href="manage.php" class="nav-link">Manage your blog</a>
-	</li>';
-	}
-else{
-$nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your blog</a>
-	</li>';
-	}
-	$servername = "localhost";
+		if($_SESSION['isBlogger']==True){
+		
+		$nav = '<li class="nav-item"><a href="manage.php" class="nav-link">Manage your blog</a>
+            </li>';
+			}
+		else{
+		$nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your blog</a>
+            </li>';
+		}
+		$servername = "localhost";
 	$username = "root";
 	$password = "";
 	$dbname = "blogger";
@@ -22,10 +21,8 @@ $nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your b
 	if ($connection->connect_error) {
 		die("Connection failed: " . $connection->connect_error);
 	} 
-	if(isset($_GET['id']))
-	$authid= $_GET['id'];
-	else
-	header('Location: author.php');
+
+	$authid= $_SESSION['login_user'];
 	$sql = "SELECT * from bloguser where user_id = '$authid'";
 	$result = $connection->query($sql);
 	while($row =$result->fetch_assoc())
@@ -46,10 +43,10 @@ $nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your b
 		            <h2 class="mb-1">'.$row1['username'].'</h2>
 		            <span class="d-block mb-4">'.$row['blogcount'].' Articles</span>
 		            <p>'.$row['authorbio'].'</p>
-		          </div>;';
+		          </div>';
 		}
 		$articles = '';
-		$sql2 = "SELECT * FROM blog order by createdon desc";
+		$sql2 = "SELECT * FROM blog where userid= '$authid' order by createdon desc";
 		$result2 = $connection->query($sql2);
 		while($row2 =$result2->fetch_assoc())
 		{	$s = $authid;
@@ -124,7 +121,8 @@ $nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your b
 
 						
 ?>
-  <head>
+<html lang="en">
+<head>
     <title>Author's page</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -190,14 +188,10 @@ $nav = '<li class="nav-item"><a href="create.php" class="nav-link">Create your b
     	<div class="container">
     		<div class="row justify-content-center mb-5 pb-2">
           <div class="col-md-7 heading-section text-center ftco-animate">
-            <?php echo $desc;?>
+            <?php echo $desc;?><a href= ""><img src ="images/new_post.png" height= "100px" alt = "new post" width ="auto"/><br/>NewPost</a>
         </div>
-    		<div class="row">
-    				
-    					
-		    					    		<?php echo $articles;?>
-    				</div>
-    		
+    		<div class="row"> 					
+		    	<?php echo $articles;?>
     			</div><!-- END-->
     			
     		</div>
