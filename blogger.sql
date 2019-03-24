@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 23, 2019 at 03:01 PM
+-- Generation Time: Mar 24, 2019 at 12:17 PM
 -- Server version: 5.7.19
 -- PHP Version: 5.6.31
 
@@ -40,14 +40,14 @@ CREATE TABLE IF NOT EXISTS `blog` (
   `comments` int(11) NOT NULL DEFAULT '0',
   `tag` varchar(20) NOT NULL DEFAULT 'blog',
   PRIMARY KEY (`blogid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `blog`
 --
 
 INSERT INTO `blog` (`blogid`, `userid`, `title`, `text`, `createdon`, `likes`, `views`, `comments`, `tag`) VALUES
-(1, 3, 'My travel blog', 'Aruba, Bonaire, and Curacao are three southern Caribbean islands in the Lesser Antilles, north of Venezuela. How far off the coast of South America are they? 15 miles for Aruba, 50 miles for Bonaire, and 40 miles for Curacao. That said, they differ greatly from Venezuela because of their history and governmental structure. \r\n\r\nEach of the ABC islands is part of the Kingdom of the Netherlands (though they are not in the European Union, themselves). Bonaire is a special municipality of the Netherlands, while Aruba and Curacao are autonomous. Culturally, all three islands are a mix of Dutch, Caribbean, and South American influences. Yum!\r\n\r\nImportant note: All three ABC Islands lie outside of Hurricane Alley, meaning they are protected from the storms that have devastated much of the Caribbean. This is a huge benefit for their economies, as well as travel planning. Let\'s examine each island.', '2019-03-16', 3, 0, 1, 'travel');
+(1, 3, 'My travel blog', 'Aruba, Bonaire, and Curacao are three southern Caribbean islands in the Lesser Antilles, north of Venezuela. How far off the coast of South America are they? 15 miles for Aruba, 50 miles for Bonaire, and 40 miles for Curacao. That said, they differ greatly from Venezuela because of their history and governmental structure. \r\n\r\nEach of the ABC islands is part of the Kingdom of the Netherlands (though they are not in the European Union, themselves). Bonaire is a special municipality of the Netherlands, while Aruba and Curacao are autonomous. Culturally, all three islands are a mix of Dutch, Caribbean, and South American influences. Yum!\r\n\r\nImportant note: All three ABC Islands lie outside of Hurricane Alley, meaning they are protected from the storms that have devastated much of the Caribbean. This is a huge benefit for their economies, as well as travel planning. Let\'s examine each island.', '2019-03-16', 16, 0, 3, 'travel');
 
 -- --------------------------------------------------------
 
@@ -62,14 +62,15 @@ CREATE TABLE IF NOT EXISTS `bloguser` (
   `blogcount` int(11) NOT NULL DEFAULT '0',
   `authorbio` text NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `bloguser`
 --
 
 INSERT INTO `bloguser` (`user_id`, `title`, `blogcount`, `authorbio`) VALUES
-(3, 'Travel talks', 1, 'I\'m a traveler and a photography. Follow me to get interesting updates on new places.');
+(3, 'Travel talks', 1, 'I\'m a traveler and a photographer. Follow me to get interesting updates on new places.'),
+(4, 'How I became a coder', 0, 'I am the coder u r looking for. I post tutorials on all languages.');
 
 -- --------------------------------------------------------
 
@@ -86,14 +87,17 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `blogid` int(11) NOT NULL,
   `date` date NOT NULL,
   PRIMARY KEY (`cid`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `comments`
 --
 
 INSERT INTO `comments` (`cid`, `userid`, `comment`, `time`, `blogid`, `date`) VALUES
-(1, 3, 'Great', '02:00:00', 1, '2013-03-19');
+(1, 3, 'Great', '02:00:00', 1, '2013-03-19'),
+(4, 4, 'Awesome blog bro! Keep going', '22:38:13', 1, '2019-03-23'),
+(5, 7, 'Good one!', '14:02:21', 1, '2019-03-24'),
+(6, 5, 'Good one!', '14:03:26', 1, '2019-03-24');
 
 -- --------------------------------------------------------
 
@@ -121,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `pwd` varchar(40) NOT NULL,
   `email` varchar(60) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user`
@@ -131,7 +135,8 @@ INSERT INTO `user` (`user_id`, `username`, `pwd`, `email`) VALUES
 (3, 'Shyam_ganesh', 'mayhs', 'shyamganesh1999@gmail.com'),
 (4, 'Cruzon', '123', 'praneethcruzon@gmail.com'),
 (5, 'Lone_wolf', '123', 'lonewolf229@gmail.com'),
-(6, 'Bharath', 'mbk', 'mbk@gmail.com');
+(6, 'Bharath', 'mbk', 'mbk@gmail.com'),
+(7, 'Swathi', '123', 'swa@gmail.com');
 
 --
 -- Constraints for dumped tables

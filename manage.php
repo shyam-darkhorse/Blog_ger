@@ -188,7 +188,7 @@ include('session.php');
     	<div class="container">
     		<div class="row justify-content-center mb-5 pb-2">
           <div class="col-md-7 heading-section text-center ftco-animate">
-            <?php echo $desc;?><a href= ""><img src ="images/new_post.png" height= "100px" alt = "new post" width ="auto"/><br/>NewPost</a>
+            <?php echo $desc;?><a href= "newpost/"><img src ="images/new_post.png" height= "100px" alt = "new post" width ="auto"/><br/>NewPost</a>
         </div>
     		<div class="row"> 					
 		    	<?php echo $articles;?>
